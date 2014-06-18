@@ -11,13 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140617120414) do
+ActiveRecord::Schema.define(version: 20140618095413) do
 
   create_table "locations", force: true do |t|
     t.string   "name",               null: false
     t.string   "area"
-    t.string   "type"
+    t.string   "location_type"
     t.integer  "parent_location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "tasks", force: true do |t|
+    t.string   "name"
+    t.integer  "location_id"
+    t.integer  "traveler_id", null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

@@ -4,7 +4,7 @@ class CreateTasks < ActiveRecord::Migration
       t.string :name
 
       t.references :location
-      t.referernces :traveler, null: false
+      t.references :traveler, null: false
       t.timestamps
     end
   end
