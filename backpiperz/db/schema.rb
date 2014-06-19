@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140618095413) do
+ActiveRecord::Schema.define(version: 20140619035515) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,15 @@ ActiveRecord::Schema.define(version: 20140618095413) do
     t.string   "area"
     t.string   "location_type"
     t.integer  "parent_location_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "reviews", force: true do |t|
+    t.string   "comment",     limit: 5000
+    t.integer  "rating",                   default: 3
+    t.integer  "traveler_id",                          null: false
+    t.integer  "location_id",                          null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
