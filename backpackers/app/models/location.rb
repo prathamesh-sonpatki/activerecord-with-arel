@@ -9,9 +9,23 @@ class Location < ActiveRecord::Base
 
   def self.with_reviews_if_available
     # Left outer join
-    joins(table.join(Review.table, Arel::OuterJoin).on(table[:id].eq(Review.table[:location_id])).join_sources)
-    # Innter join with extra join conditions
-    # joins(table.join(Review.table).on(table[:id].eq(Review.table[:location_id].and(Review.rating_more_than_3)).join_sources))
+    joins(
+      table.join(Review.table, Arel::OuterJoin)
+           .on(table[:id].eq(Review.table[:location_id])
+         ).join_sources
+         )
+  end
+
+  def self.with_reviews_having_rating_greater_than(rating = 3)
+    joins(
+      table.join(Review.table, Arel::OuterJoin).
+            on(locations_reviews_join.and(Review.having_rating_more_than(rating)))
+            .join_sources
+         )
+  end
+
+  def self.locations_reviews_join
+    table[:id].eq(Review.table[:location_id])
   end
 
   private

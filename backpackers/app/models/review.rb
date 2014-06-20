@@ -5,8 +5,8 @@ class Review < ActiveRecord::Base
   belongs_to :traveler
   belongs_to :location
 
-  def self.rating_more_than_3
-    table[:rating].gt(3)
+  def self.having_rating_more_than(rating)
+    table[:rating].gt(rating)
   end
 
   private
