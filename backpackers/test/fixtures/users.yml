@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  email: john@example.com
+  password: welcome
+  name: John Smith
+  sekret: I ate the cookies!
+
+two:
+  email: jane@example.com
+  password: welcome
+  name: Jane Smith
+  sekret: Me too :P
