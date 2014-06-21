@@ -66,6 +66,20 @@ class Location < ActiveRecord::Base
     # SELECT locations.* FROM locations INNER JOIN bookings ON bookings.location_id = locations.id
   end
 
+  # Self join(In this case AR example is more easier than Arel)
+  # RAW
+  def self.all_nearby_locations_of_a_type_raw
+    joins(:nearby_locations)
+    # SELECT locations.* FROM locations INNER JOIN locations nearby_locations_locations ON nearby_locations_locations.parent_location_id = locations.id
+  end
+
+  # Arel
+  def self.all_nearby_locations_of_a_type
+    nearby_locations = table.alias
+    joins(table.join(nearby_locations).on(table[:id].eq(nearby_locations[:parent_location_id])).join_sources)
+    # SELECT locations.* FROM locations INNER JOIN locations locations_2 ON locations.id = locations_2.parent_location_id
+  end
+
   private
 
   def self.table
