@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+indian:
+  cuisine: Indian
+  cost: 100.0
+  location_id: 
+
+chinese:
+  cuisine: Chinese
+  cost: 150.0
+  location_id: 

@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140621041229) do
+ActiveRecord::Schema.define(version: 20140621090419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pgcrypto"
 
   create_table "bookings", force: true do |t|
     t.integer  "traveler_id", null: false
@@ -33,6 +34,16 @@ ActiveRecord::Schema.define(version: 20140621041229) do
     t.datetime "updated_at"
     t.integer  "distance_from_parent"
   end
+
+  create_table "restaurants", force: true do |t|
+    t.string   "cuisine"
+    t.integer  "location_id"
+    t.decimal  "cost",        default: 10.0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "restaurants", ["location_id"], name: "index_restaurants_on_location_id", using: :btree
 
   create_table "reviews", force: true do |t|
     t.string   "comment",     limit: 5000
