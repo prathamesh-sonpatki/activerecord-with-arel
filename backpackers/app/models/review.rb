@@ -5,6 +5,12 @@ class Review < ActiveRecord::Base
   belongs_to :traveler
   belongs_to :location
 
+  # RAW
+  def self.having_rating_more_than_raw(rating)
+    where("rating > ?", rating)
+  end
+
+  # Arel
   def self.having_rating_more_than(rating)
     table[:rating].gt(rating)
   end
