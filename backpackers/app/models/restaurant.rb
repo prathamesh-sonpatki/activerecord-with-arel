@@ -36,6 +36,15 @@ class Restaurant < ActiveRecord::Base
     # SELECT restaurants.* FROM restaurants  WHERE (restaurants.cost BETWEEN 12 AND 45)
   end
 
+  # InsertManager
+  def self.insert_restaurant_with_location_and_cuisine(cuisine, location_id)
+    manager = Arel::InsertManager.new table.engine
+    manager.into table
+    manager.insert [[table[:cuisine], 'cuisine'], [table[:location_id], location_id]]
+    manager.to_sql
+    # INSERT INTO restaurants (cuisine, location_id) VALUES ('cuisine', 1)
+  end
+
   private
 
   def self.table
