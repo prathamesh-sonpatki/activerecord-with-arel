@@ -1,25 +1,42 @@
 class Restaurant < ActiveRecord::Base
   belongs_to :location
 
-  def self.chinese_or_indian_search(search_term)
+  # RAW
+  def self.food_search_raw search_term
     where("cuisine ILIKE ? OR cuisine ILIKE ? or cuisine ILIKE ?", '%indian%', '%chinese%', "%#{search_term}%" )
+    # SELECT restaurants.* FROM restaurants  WHERE (cuisine ILIKE '%indian%' OR cuisine ILIKE '%chinese%' or cuisine ILIKE '%india%')
   end
 
-  def self.search search_term
+  # Arel
+  def self.food_search search_term
     where(table[:cuisine].matches_any(['%indian%', '%chinese%', "%#{search_term}%"]))
+    # SELECT restaurants.* FROM restaurants  WHERE ((restaurants.cuisine ILIKE '%indian%' OR restaurants.cuisine ILIKE '%chinese%' OR restaurants.cuisine ILIKE '%india%'))
   end
 
-  def self.search_not search_term
+  # Negation Arel
+  def self.food_search_not search_term
     where(table[:cuisine].does_not_match(search_term))
+    # SELECT restaurants.* FROM restaurants  WHERE (restaurants.cuisine NOT ILIKE 'indian')
   end
 
+  # Range example
+  # RAW
   def self.cost_in_range_raw range
     where("cost BETWEEN ? AND ?", range.first, range.last)
+    # Restaurant.cost_in_range_raw 12..45
+    # SELECT "restaurants".* FROM "restaurants"  WHERE (cost BETWEEN 12 AND 45)
   end
 
+  # Arel
   def self.cost_in range
     where(table[:cost].in range)
+    # Restaurant.cost_in([12,45])
+    # SELECT restaurants.* FROM restaurants  WHERE restaurants.cost IN (12, 45)
+    # Restaurant.cost_in(12..45)
+    # SELECT restaurants.* FROM restaurants  WHERE (restaurants.cost BETWEEN 12 AND 45)
   end
+
+  private
 
   def self.table
     arel_table

@@ -15,7 +15,6 @@ ActiveRecord::Schema.define(version: 20140621090419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-  enable_extension "pgcrypto"
 
   create_table "bookings", force: true do |t|
     t.integer  "traveler_id", null: false
