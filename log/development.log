@@ -1,0 +1,637 @@
+  [1m[36mSQL (0.3ms)[0m  [1mCREATE EXTENSION IF NOT EXISTS "plpgsql"[0m
+  [1m[35m (11.1ms)[0m  CREATE TABLE "locations" ("id" serial primary key, "name" character varying(255) NOT NULL, "area" character varying(255), "location_type" character varying(255), "parent_location_id" integer, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (3.2ms)[0m  [1mCREATE TABLE "reviews" ("id" serial primary key, "comment" character varying(5000), "rating" integer DEFAULT 3, "traveler_id" integer NOT NULL, "location_id" integer NOT NULL, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (2.5ms)[0m  CREATE TABLE "tasks" ("id" serial primary key, "name" character varying(255), "location_id" integer, "traveler_id" integer NOT NULL, "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36m (2.6ms)[0m  [1mCREATE TABLE "travelers" ("id" serial primary key, "name" character varying(255), "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (0.7ms)[0m  CREATE TABLE "schema_migrations" ("version" character varying(255) NOT NULL) 
+  [1m[36m (1.0ms)[0m  [1mCREATE UNIQUE INDEX  "unique_schema_migrations" ON "schema_migrations"  ("version")[0m
+  [1m[35m (0.3ms)[0m  SELECT version FROM "schema_migrations"
+  [1m[36m (0.5ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20140619035515')[0m
+  [1m[35m (0.4ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20140617120406')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20140617120414')[0m
+  [1m[35m (0.3ms)[0m  INSERT INTO "schema_migrations" (version) VALUES ('20140617120740')
+  [1m[36m (0.3ms)[0m  [1mINSERT INTO "schema_migrations" (version) VALUES ('20140618095413')[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.2ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36mActiveRecord::SchemaMigration Load (0.5ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.2ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36mLocation Load (0.4ms)[0m  [1mSELECT "locations".* FROM "locations"[0m
+  [1m[35mReview Load (0.5ms)[0m  SELECT "reviews".* FROM "reviews"
+  [1m[36mLocation Load (1.2ms)[0m  [1mSELECT "locations".* FROM "locations" LEFT OUTER JOIN "reviews" ON "locations"."id" = "reviews"."location_id"[0m
+  [1m[35mLocation Load (0.6ms)[0m  SELECT "locations".* FROM "locations" LEFT OUTER JOIN "reviews" ON "locations"."id" = "reviews"."location_id" AND "reviews"."rating" > 3
+  [1m[36mActiveRecord::SchemaMigration Load (0.7ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to AddCompletedAtToTasks (20140620153051)
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (9.9ms)[0m  [1mALTER TABLE "tasks" ADD COLUMN "completed" boolean DEFAULT 'f'[0m
+  [1m[35m (0.8ms)[0m  ALTER TABLE "tasks" ADD COLUMN "completed_at" timestamp
+  [1m[36mSQL (0.3ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ($1)[0m  [["version", "20140620153051"]]
+  [1m[35m (1.5ms)[0m  COMMIT
+Migrating to CreateUsers (20140620173158)
+  [1m[36m (0.1ms)[0m  [1mBEGIN[0m
+  [1m[35m (3.0ms)[0m  CREATE TABLE "users" ("id" serial primary key, "email" character varying(255), "password" character varying(255), "name" character varying(255), "sekret" character varying(255), "created_at" timestamp, "updated_at" timestamp) 
+  [1m[36mSQL (0.1ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ($1)[0m  [["version", "20140620173158"]]
+  [1m[35m (0.3ms)[0m  COMMIT
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36m (0.7ms)[0m  [1mSELECT pgp_sym_encrypt('lol', 'sekret')[0m
+PG::UndefinedFunction: ERROR:  function pgp_sym_encrypt(unknown, unknown) does not exist
+LINE 1: SELECT pgp_sym_encrypt('lol', 'sekret')
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+: SELECT pgp_sym_encrypt('lol', 'sekret')
+  [1m[35m (0.5ms)[0m  /Users/sward/work/experiments/crypt_keeper/README.md
+PG::SyntaxError: ERROR:  syntax error at or near "/"
+LINE 1: /Users/sward/work/experiments/crypt_keeper/README.md
+        ^
+: /Users/sward/work/experiments/crypt_keeper/README.md
+  [1m[36m (26.8ms)[0m  [1mCREATE EXTENSION IF NOT EXISTS pgcrypto[0m
+  [1m[35m (8.2ms)[0m  SELECT pgp_sym_encrypt('lol', 'sekret')
+  [1m[36m (0.4ms)[0m  [1mSELECT pgp_sym_decrypt('lol', 'sekret')[0m
+PG::ExternalRoutineInvocationException: ERROR:  Wrong key or corrupt data
+: SELECT pgp_sym_decrypt('lol', 'sekret')
+  [1m[35m (0.3ms)[0m  SELECT pgp_sym_decrypt('sekret', '\xc30d04070302ead63c9e04cc6e3e7ed23401ba88bf7a71d971f1a58dcd4389ecfc0d17fb7b7d72d924a953efb432a44fdeca57a2046ea3276b7d7e77543a335c5d126913bb')
+PG::ExternalRoutineInvocationException: ERROR:  Wrong key or corrupt data
+: SELECT pgp_sym_decrypt('sekret', '\xc30d04070302ead63c9e04cc6e3e7ed23401ba88bf7a71d971f1a58dcd4389ecfc0d17fb7b7d72d924a953efb432a44fdeca57a2046ea3276b7d7e77543a335c5d126913bb')
+  [1m[36mUser Load (0.4ms)[0m  [1mSELECT "users".* FROM "users"  WHERE (pgp_sym_encrypt(*, *))[0m
+PG::SyntaxError: ERROR:  syntax error at or near ","
+LINE 1: SELECT "users".* FROM "users"  WHERE (pgp_sym_encrypt(*, *))
+                                                               ^
+: SELECT "users".* FROM "users"  WHERE (pgp_sym_encrypt(*, *))
+  [1m[35mUser Load (0.4ms)[0m  SELECT "users".* FROM "users"  WHERE (pgp_sym_encrypt('lol', 'sekret'))
+PG::DatatypeMismatch: ERROR:  argument of WHERE must be type boolean, not type bytea
+LINE 1: SELECT "users".* FROM "users"  WHERE (pgp_sym_encrypt('lol',...
+                                              ^
+: SELECT "users".* FROM "users"  WHERE (pgp_sym_encrypt('lol', 'sekret'))
+  [1m[36m (0.2ms)[0m  [1m#<Arel::SelectManager:0x007f9bd59613b0>[0m
+TypeError: wrong argument type Arel::SelectManager (expected String): #<Arel::SelectManager:0x007f9bd59613b0>
+  [1m[35m (0.4ms)[0m  SELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC, "reviews"."created_at" DESC) FROM "reviews"
+PG::SyntaxError: ERROR:  syntax error at or near "("
+LINE 1: SELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC...
+                                   ^
+: SELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC, "reviews"."created_at" DESC) FROM "reviews"
+  [1m[36m (0.2ms)[0m  [1mSELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC) FROM "reviews"[0m
+PG::SyntaxError: ERROR:  syntax error at or near "("
+LINE 1: SELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC...
+                                   ^
+: SELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC) FROM "reviews"
+  [1m[35m (0.3ms)[0m  SELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC) FROM "reviews"
+PG::SyntaxError: ERROR:  syntax error at or near "("
+LINE 1: SELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC...
+                                   ^
+: SELECT "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC) FROM "reviews"
+  [1m[36m (1.1ms)[0m  [1mSELECT * FROM "reviews"  GROUP BY "reviews"."location_id" WINDOW "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC, "reviews"."created_at" DESC)[0m
+PG::GroupingError: ERROR:  column "reviews.id" must appear in the GROUP BY clause or be used in an aggregate function
+LINE 1: SELECT * FROM "reviews"  GROUP BY "reviews"."location_id" WI...
+               ^
+: SELECT * FROM "reviews"  GROUP BY "reviews"."location_id" WINDOW "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC, "reviews"."created_at" DESC)
+  [1m[35m (0.6ms)[0m  SELECT * FROM "reviews"  WINDOW "sorted_reviews" AS (ORDER BY "reviews"."rating" DESC)
+  [1m[36m (0.7ms)[0m  [1mSELECT * FROM "reviews"  WINDOW "sorted_reviews" AS (PARTITION  BY "reviews"."rating" DESC)[0m
+PG::SyntaxError: ERROR:  syntax error at or near "DESC"
+LINE 1: ... "sorted_reviews" AS (PARTITION  BY "reviews"."rating" DESC)
+                                                                  ^
+: SELECT * FROM "reviews"  WINDOW "sorted_reviews" AS (PARTITION  BY "reviews"."rating" DESC)
+  [1m[35m (0.3ms)[0m  SELECT * FROM "reviews"  WINDOW "sorted_reviews" AS (PARTITION  BY "reviews"."rating")
+  [1m[36m (0.4ms)[0m  [1mSELECT * FROM "reviews"  WINDOW "sorted_reviews" AS (PARTITION BY "reviews"."location_id" ORDER BY "reviews"."rating" DESC, "reviews"."created_at" DESC)[0m
+  [1m[36mRestaurant Load (0.9ms)[0m  [1mSELECT "restaurants".* FROM "restaurants"  WHERE (cuisine ILIKE %indian% OR cuisine ILIKE %chinese% or cuisine ILIKE %best%)[0m
+PG::SyntaxError: ERROR:  syntax error at or near "%"
+LINE 1: ...rants".* FROM "restaurants"  WHERE (cuisine ILIKE %indian% O...
+                                                             ^
+: SELECT "restaurants".* FROM "restaurants"  WHERE (cuisine ILIKE %indian% OR cuisine ILIKE %chinese% or cuisine ILIKE %best%)
+  [1m[35mRestaurant Load (0.5ms)[0m  SELECT "restaurants".* FROM "restaurants"  WHERE (cuisine ILIKE '%indian%' OR cuisine ILIKE '%chinese%' or cuisine ILIKE '%best%')
+PG::UndefinedTable: ERROR:  relation "restaurants" does not exist
+LINE 1: SELECT "restaurants".* FROM "restaurants"  WHERE (cuisine IL...
+                                    ^
+: SELECT "restaurants".* FROM "restaurants"  WHERE (cuisine ILIKE '%indian%' OR cuisine ILIKE '%chinese%' or cuisine ILIKE '%best%')
+  [1m[36mActiveRecord::SchemaMigration Load (1.1ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Migrating to CreateBookings (20140621014801)
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (5.4ms)[0m  [1mCREATE TABLE "bookings" ("id" serial primary key, "traveler_id" integer NOT NULL, "location_id" integer NOT NULL, "no_of_days" integer, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20140621014801"]]
+  [1m[36m (1.1ms)[0m  [1mCOMMIT[0m
+Migrating to AddDistanceFromParentToLocations (20140621041229)
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (0.3ms)[0m  [1mALTER TABLE "locations" ADD COLUMN "distance_from_parent" integer[0m
+  [1m[35mSQL (0.2ms)[0m  INSERT INTO "schema_migrations" ("version") VALUES ($1)  [["version", "20140621041229"]]
+  [1m[36m (0.3ms)[0m  [1mCOMMIT[0m
+Migrating to CreateRestaurants (20140621090419)
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (2.8ms)[0m  [1mCREATE TABLE "restaurants" ("id" serial primary key, "cuisine" character varying(255), "location_id" integer, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (0.9ms)[0m  CREATE  INDEX  "index_restaurants_on_location_id" ON "restaurants"  ("location_id")
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ($1)[0m  [["version", "20140621090419"]]
+  [1m[35m (0.4ms)[0m  COMMIT
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36mRestaurant Load (3.2ms)[0m  [1mSELECT "restaurants".* FROM "restaurants"  WHERE (cuisine ILIKE '%indian%' OR cuisine ILIKE '%chinese%' or cuisine ILIKE '%best%')[0m
+  [1m[35mRestaurant Load (0.6ms)[0m  SELECT "restaurants".* FROM "restaurants"  WHERE (cuisine ILIKE '%indian%' OR cuisine ILIKE '%chinese%' or cuisine ILIKE '%rawr food bro%')
+  [1m[36mRestaurant Load (0.2ms)[0m  [1mSELECT ("restaurants"."cuisine" ILIKE '%indian%' OR "restaurants"."cuisine" ILIKE '%chinese%' OR "restaurants"."cuisine" ILIKE '%lol%') FROM "restaurants"[0m
+  [1m[35mRestaurant Load (0.2ms)[0m  SELECT "restaurants".* FROM "restaurants"  WHERE (("restaurants"."cuisine" ILIKE '%indian%' OR "restaurants"."cuisine" ILIKE '%chinese%' OR "restaurants"."cuisine" ILIKE '%lol%'))
+  [1m[36mRestaurant Load (1.3ms)[0m  [1mSELECT "restaurants".* FROM "restaurants"  WHERE ("restaurants"."cuisine" NOT ILIKE 'lol')[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.3ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.2ms)[0m  BEGIN
+  [1m[36m (1.9ms)[0m  [1mDROP TABLE "restaurants"[0m
+  [1m[35mSQL (1.4ms)[0m  DELETE FROM "schema_migrations" WHERE "schema_migrations"."version" = '20140621090419'
+  [1m[36m (1.0ms)[0m  [1mCOMMIT[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.2ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (0.2ms)[0m  [1mROLLBACK[0m
+  [1m[36mActiveRecord::SchemaMigration Load (0.3ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35mActiveRecord::SchemaMigration Load (0.2ms)[0m  SELECT "schema_migrations".* FROM "schema_migrations"
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[35m (0.1ms)[0m  BEGIN
+  [1m[36m (4.5ms)[0m  [1mCREATE TABLE "restaurants" ("id" serial primary key, "cuisine" character varying(255), "location_id" integer, "cost" decimal DEFAULT 10, "created_at" timestamp, "updated_at" timestamp) [0m
+  [1m[35m (0.6ms)[0m  CREATE  INDEX  "index_restaurants_on_location_id" ON "restaurants"  ("location_id")
+  [1m[36mSQL (0.2ms)[0m  [1mINSERT INTO "schema_migrations" ("version") VALUES ($1)[0m  [["version", "20140621090419"]]
+  [1m[35m (0.8ms)[0m  COMMIT
+  [1m[36mActiveRecord::SchemaMigration Load (0.2ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+  [1m[36mRestaurant Load (2.4ms)[0m  [1mSELECT "restaurants".* FROM "restaurants"  WHERE ("restaurants"."cost" BETWEEN 1 AND 12)[0m
+  [1m[35mRestaurant Load (0.3ms)[0m  SELECT "restaurants".* FROM "restaurants"  WHERE ("restaurants"."cost" BETWEEN 1.21 AND 12.1)
+  [1m[36mRestaurant Load (0.5ms)[0m  [1mSELECT "restaurants".* FROM "restaurants"  WHERE ("restaurants"."cost" BETWEEN '1.21' AND '12.1')[0m
+  [1m[35mRestaurant Load (0.5ms)[0m  SELECT "restaurants".* FROM "restaurants"  WHERE "restaurants"."cost" IN (1, 2, 3)
+  [1m[36mRestaurant Load (0.4ms)[0m  [1mSELECT "restaurants".* FROM "restaurants"  WHERE (cost BETWEEN 1 AND 12)[0m
+
+
+Started GET "/login" for 127.0.0.1 at 2014-06-22 00:48:54 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.7ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+
+ActionController::RoutingError (No route matches [GET] "/login"):
+  actionpack (4.1.1) lib/action_dispatch/middleware/debug_exceptions.rb:21:in `call'
+  actionpack (4.1.1) lib/action_dispatch/middleware/show_exceptions.rb:30:in `call'
+  railties (4.1.1) lib/rails/rack/logger.rb:38:in `call_app'
+  railties (4.1.1) lib/rails/rack/logger.rb:20:in `block in call'
+  activesupport (4.1.1) lib/active_support/tagged_logging.rb:68:in `block in tagged'
+  activesupport (4.1.1) lib/active_support/tagged_logging.rb:26:in `tagged'
+  activesupport (4.1.1) lib/active_support/tagged_logging.rb:68:in `tagged'
+  railties (4.1.1) lib/rails/rack/logger.rb:20:in `call'
+  actionpack (4.1.1) lib/action_dispatch/middleware/request_id.rb:21:in `call'
+  rack (1.5.2) lib/rack/methodoverride.rb:21:in `call'
+  rack (1.5.2) lib/rack/runtime.rb:17:in `call'
+  activesupport (4.1.1) lib/active_support/cache/strategy/local_cache_middleware.rb:26:in `call'
+  rack (1.5.2) lib/rack/lock.rb:17:in `call'
+  actionpack (4.1.1) lib/action_dispatch/middleware/static.rb:64:in `call'
+  rack (1.5.2) lib/rack/sendfile.rb:112:in `call'
+  railties (4.1.1) lib/rails/engine.rb:514:in `call'
+  railties (4.1.1) lib/rails/application.rb:144:in `call'
+  rack (1.5.2) lib/rack/lock.rb:17:in `call'
+  rack (1.5.2) lib/rack/content_length.rb:14:in `call'
+  rack (1.5.2) lib/rack/handler/webrick.rb:60:in `service'
+  /Users/sward/.rbenv/versions/2.1.2/lib/ruby/2.1.0/webrick/httpserver.rb:138:in `service'
+  /Users/sward/.rbenv/versions/2.1.2/lib/ruby/2.1.0/webrick/httpserver.rb:94:in `run'
+  /Users/sward/.rbenv/versions/2.1.2/lib/ruby/2.1.0/webrick/server.rb:295:in `block in start_thread'
+
+
+  Rendered /Users/sward/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/actionpack-4.1.1/lib/action_dispatch/middleware/templates/rescues/_trace.html.erb (0.8ms)
+  Rendered /Users/sward/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/actionpack-4.1.1/lib/action_dispatch/middleware/templates/routes/_route.html.erb (0.5ms)
+  Rendered /Users/sward/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/actionpack-4.1.1/lib/action_dispatch/middleware/templates/routes/_table.html.erb (5.5ms)
+  Rendered /Users/sward/.rbenv/versions/2.1.2/lib/ruby/gems/2.1.0/gems/actionpack-4.1.1/lib/action_dispatch/middleware/templates/rescues/routing_error.html.erb within rescues/layout (22.9ms)
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:48:58 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.3ms)
+Completed 200 OK in 413ms (Views: 403.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:48:59 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:48:59 +0530
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:48:59 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:48:59 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:48:59 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:48:59 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:48:59 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:48:59 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.7ms)
+Completed 200 OK in 22ms (Views: 21.1ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:51:32 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:51:33 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.1ms)
+Completed 200 OK in 43ms (Views: 42.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:52:21 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.3ms)
+Completed 200 OK in 6ms (Views: 4.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:52:23 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.1ms)
+Completed 200 OK in 13ms (Views: 12.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:53:08 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.2ms)
+Completed 200 OK in 4ms (Views: 3.0ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:53:09 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.4ms)
+Completed 200 OK in 4ms (Views: 3.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:53:44 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.5ms)
+Completed 200 OK in 5ms (Views: 4.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:53:50 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.4ms)
+Completed 200 OK in 4ms (Views: 3.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:54:11 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.7ms)
+Completed 200 OK in 7ms (Views: 5.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:54:48 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:54:57 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.5ms)
+Completed 200 OK in 4ms (Views: 3.6ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:54:58 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:58 +0530
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:54:58 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:58 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:58 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:58 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:54:58 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:54:58 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.4ms)
+Completed 200 OK in 4ms (Views: 3.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:55:23 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.2ms)
+Completed 200 OK in 5ms (Views: 4.3ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:55:49 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 00:55:56 +0530
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (0.4ms)
+Completed 200 OK in 4ms (Views: 3.4ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 00:55:57 +0530
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 00:55:57 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:57 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:57 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:57 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:57 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 00:55:57 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 00:55:57 +0530
+
+
+Started GET "/" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
+  [1m[36mActiveRecord::SchemaMigration Load (0.3ms)[0m  [1mSELECT "schema_migrations".* FROM "schema_migrations"[0m
+Processing by HomeController#index as HTML
+  Rendered home/index.html.erb within layouts/application (3.4ms)
+Completed 200 OK in 34ms (Views: 26.8ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/application.css?body=1" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
+
+
+Started GET "/assets/turbolinks.js?body=1" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
+
+
+Started GET "/assets/home.css?body=1" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
+
+
+Started GET "/assets/home.js?body=1" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
+
+
+Started GET "/assets/application.js?body=1" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
+
+
+Started GET "/assets/backpack-cat.jpg" for 127.0.0.1 at 2014-06-22 01:05:44 +0530
