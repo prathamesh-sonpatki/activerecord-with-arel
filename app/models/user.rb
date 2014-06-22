@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
 
+  validates_presence_of :cat, message: ':You. Must. Be. A. Cat. To. Signup.'
   # RAW
   def set_sekret(value = 'lol', key = 'sekret')
     escape_and_execute(["SELECT pgp_sym_encrypt(?, ?)", value.to_s, key])['pgp_sym_encrypt']

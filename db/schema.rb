@@ -11,10 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140621090419) do
+ActiveRecord::Schema.define(version: 20140622180050) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+  enable_extension "pgcrypto"
 
   create_table "bookings", force: true do |t|
     t.integer  "traveler_id", null: false
@@ -76,6 +77,7 @@ ActiveRecord::Schema.define(version: 20140621090419) do
     t.string   "sekret"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "cat"
   end
 
 end
