@@ -3,6 +3,12 @@ class Task < ActiveRecord::Base
 
   validates :name, presence: true
 
+  # RAW
+  def self.order_criteria_raw
+    "coalesce('completed_at', 'created_at')"
+  end
+
+  # Arel
   def self.order_criteria
     Arel::Nodes::NamedFunction.new('coalesce', ['completed_at', 'created_at'])
   end
