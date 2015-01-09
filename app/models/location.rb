@@ -94,7 +94,7 @@ class Location < ActiveRecord::Base
 
   # Arel
   def self.all_nearby_locations_within_distance_from_parent
-    nearby_locations = table.alias
+    nearby_locations = table.alias("nearby_locations")
     joins(table.join(nearby_locations)
       .on(table[:id].eq(nearby_locations[:parent_location_id])
                     .and(nearby_locations[:distance_from_parent].lteq(5)
@@ -104,9 +104,9 @@ class Location < ActiveRecord::Base
          )
       .join_sources
     )
-    # SELECT locations.* FROM locations INNER JOIN locations locations_2
-    # ON locations.id = locations_2.parent_location_id
-    # AND locations_2.distance_from_parent <= 5
+    # SELECT locations.* FROM locations INNER JOIN locations nearby_locations
+    # ON locations.id = nearby_locations.parent_location_id
+    # AND nearby_locations.distance_from_parent <= 5
   end
   private
 
